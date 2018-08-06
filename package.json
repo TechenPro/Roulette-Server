@@ -1,0 +1,18 @@
+{
+  "name": "Roulette-Server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "cors": "^2.8.4",
+    "express": "^4.16.3",
+    "mysql": "^2.16.0",
+    "nodemon": "^1.17.5"
+  }
+}
