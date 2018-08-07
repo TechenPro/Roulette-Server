@@ -3,6 +3,7 @@ const http = require('http');
 const app = express();
 const cors = require('cors');
 const mysql = require('mysql');
+const multer = require('multer');
 
 // SQL Connection Config
 const connection = mysql.createConnection({
@@ -20,17 +21,20 @@ connection.connect(err => {
 });
 
 
+// App Setup
 app.use(cors());
+app.use(multer({dest:'./uploads/'}).single('image'))
+app.use(express.static('uploads'));
 
 
-//server setup
+// Server Setup
 const port = process.env.PORT || 4000;
 const server = http.createServer(app);
 server.listen(port);
 console.log('server listening on port ', + port);
 
 
-//Test
+// Routes
 app.get('/', function (req, res) {
   res.send('wesdfkjasdlkfahsdlkfjhasldkf')
 })

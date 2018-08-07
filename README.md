@@ -1,17 +1,12 @@
-# nodeserver
-Made a template auth server.
+# Roulette Server
+Connect the PokeRoulette App to an SQL database.
 
-- cd into nodeserver
+- cd into Roulette-Server
 - `npm install`
-- `touch config.js`
-- put a secret in your config.js 
-  ```
-  module.exports = {
-    secret: 'put-a-random-set-of-characters-in-here-instead-of-this-sentence'
-  }
-  ```
-- `npm run dev`
-- in a new terminal tab start mongo 
-  - `mongod`
-  - `mongo`
+
+- Connect the SQL Database
+  - Make sure the SQL server is running
+  - Change the connection configs in `index.js`
+
+- `npm run dev` to start the nodeserver running.
   
