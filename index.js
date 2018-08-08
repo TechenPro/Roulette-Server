@@ -9,8 +9,8 @@ const multer = require('multer');
 const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: '1.618apples',
-  database: 'roulette-ffa'
+  password: 'password',
+  database: 'roulette-server'
 });
 
 // Connect to SQL Server
@@ -24,12 +24,9 @@ connection.connect(err => {
 const ALL_PLAYERS = 
   `SELECT * 
   FROM players`;
-const GET_RANDOM_POKEMON = 
-  `SELECT * 
-  FROM kanto_dex 
-  ORDER BY RAND() 
-  LIMIT 1`
-
+const ALL_POKEMON =
+  `SELECT pokemon1, pokemon2, pokemon3
+  FROM players`;
 
 // App Setup
 app.use(cors());
@@ -73,11 +70,29 @@ app.get('/players/data', (req, res) => {
   })
 })
 
+app.get('/players/data/pokemon', (req, res) => {
+
+  connection.query(ALL_POKEMON, (err, results) => {
+    if(err){
+      res.send(err)
+    } else {
+      res.send(results)
+    }
+  })
+})
+
 app.post('/roll', (req, res) => {
   const playerID = req.body.playerID;
+  const slotID = req.body.slotID;
+
+  const GET_RANDOM_POKEMON = 
+    `UPDATE players
+    SET pokemon${slotID} = (SELECT id FROM kanto_dex ORDER BY RAND() LIMIT 1)
+    WHERE id = ${playerID}`
+    // SELECT * FROM players WHERE id = ${playerID};
   
   connection.query(GET_RANDOM_POKEMON, (err, results) => {
-    if(err){res.send(err)} else {var PID = results[0].id}
+    if(err){res.send(err)} else {res.send(results)}
   })
 
 })
