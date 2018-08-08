@@ -10,7 +10,7 @@ const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: '1.618apples',
-  database: 'pokedex'
+  database: 'roulette-ffa'
 });
 
 // Connect to SQL Server
@@ -19,6 +19,16 @@ connection.connect(err => {
     return err;
   }
 });
+
+// DEFINE QUERIES
+const ALL_PLAYERS = 
+  `SELECT * 
+  FROM players`;
+const GET_RANDOM_POKEMON = 
+  `SELECT * 
+  FROM kanto_dex 
+  ORDER BY RAND() 
+  LIMIT 1`
 
 
 // App Setup
@@ -41,7 +51,7 @@ app.get('/', function (req, res) {
 
 app.get('/dex', (req, res) => {
 
-  connection.query('SELECT * FROM kanto_dex', (err, results) => {
+  connection.query(ALL_PLAYERS, (err, results) => {
     if (err) {
       return res.send(err)
     } else {
@@ -50,4 +60,24 @@ app.get('/dex', (req, res) => {
       })
     }
   })
+})
+
+app.get('/players/data', (req, res) => {
+
+  connection.query(ALL_PLAYERS, (err, results) => {
+    if(err){
+      res.send(err)
+    } else {
+      res.send(results)
+    }
+  })
+})
+
+app.post('/roll', (req, res) => {
+  const playerID = req.body.playerID;
+  
+  connection.query(GET_RANDOM_POKEMON, (err, results) => {
+    if(err){res.send(err)} else {var PID = results[0].id}
+  })
+
 })
