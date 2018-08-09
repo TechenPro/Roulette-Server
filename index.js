@@ -9,8 +9,9 @@ const multer = require('multer');
 const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: 'password',
-  database: 'roulette-server'
+  password: '1.618apples',
+  database: 'roulette-ffa',
+  multipleStatements: true
 });
 
 // Connect to SQL Server
@@ -27,10 +28,15 @@ const ALL_PLAYERS =
 const ALL_POKEMON =
   `SELECT pokemon1, pokemon2, pokemon3
   FROM players`;
+const WIPE_PLAYERS = 
+  `UPDATE players
+  SET pokemon1 = 1, pokemon2 = 1, pokemon3 = 1`
 
 // App Setup
 app.use(cors());
 app.use(multer({dest:'./uploads/'}).single('image'))
+
+
 app.use(express.static('uploads'));
 
 
@@ -46,7 +52,7 @@ app.get('/', function (req, res) {
   res.send('wesdfkjasdlkfahsdlkfjhasldkf')
 })
 
-app.get('/dex', (req, res) => {
+app.get('/dex', (req, res, next) => {
 
   connection.query(ALL_PLAYERS, (err, results) => {
     if (err) {
@@ -59,7 +65,7 @@ app.get('/dex', (req, res) => {
   })
 })
 
-app.get('/players/data', (req, res) => {
+app.get('/players/data', (req, res, next) => {
 
   connection.query(ALL_PLAYERS, (err, results) => {
     if(err){
@@ -70,29 +76,32 @@ app.get('/players/data', (req, res) => {
   })
 })
 
-app.get('/players/data/pokemon', (req, res) => {
-
+app.get('/players/data/pokemon', (req, res, next) => {
+  // console.log('Starting Fetch Server');
   connection.query(ALL_POKEMON, (err, results) => {
     if(err){
       res.send(err)
     } else {
-      res.send(results)
+      res.send(results);
     }
   })
+  // console.log('Fetch Complete Server');
+
 })
 
-app.post('/roll', (req, res) => {
+
+// POST REQUESTS
+app.post('/roll', (req, res, next) => {
   const playerID = req.body.playerID;
   const slotID = req.body.slotID;
 
   const GET_RANDOM_POKEMON = 
     `UPDATE players
     SET pokemon${slotID} = (SELECT id FROM kanto_dex ORDER BY RAND() LIMIT 1)
-    WHERE id = ${playerID}`
-    // SELECT * FROM players WHERE id = ${playerID};
+    WHERE id = ${playerID};
+    ${ALL_POKEMON}`
   
   connection.query(GET_RANDOM_POKEMON, (err, results) => {
-    if(err){res.send(err)} else {res.send(results)}
+    if(err){res.send(err)} else {res.send(results[1])}
   })
-
 })
